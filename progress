@@ -1,0 +1,34 @@
+This documents my progress with the get_next_line project.
+
+I will start by trying to create a basic shitty get_next_line without going too much into the details.
+Then, I want to spend a not too big amount of time on trying to really understand read, file descriptors, etc.
+
+Before I start, I need to figure out the -D flag when compiling and how the BUFFER_SIZE works.
+	-	-D is to define a macro
+	- 	These lines can be used to define a macro only if it has not yet been defined. This is enough knowledge for the shitty version.
+			#ifndef MACRO_NAME
+			#define MACRO_NAME value
+			#endif
+
+Without going too deep, I should know how to pracitally open a file and pass the file descriptor to a function, so I can test my function.
+	-	fd = open(filename, O_RDONLY);
+	-	fd meanings
+		-	0: Standard input (stdin)
+		-	1: Standard output (stdout)
+		-	2: Standard error (stderr)
+		-	Positive integers are valid file descriptors for opened files or resources.
+		-	-1 indicates an error in file or resource operations.
+
+I have started to work on the logic of the problem. I will assume that the file does not contain null characters, so I can use them for my logic.
+
+
+So my get_next_line works and suprisingly has no leaks. However, the output is weird. I should write it with write to rule out printf malfunction 
+	or go through my function step by step, whatever is easier.
+	- The output works now.
+
+Now I have to check the francinette errors, starting with non-strict Leaks for empty text. Why do I have a leak? Do I not free?
+
+I now pass the normal francinette. I am looking and the null check of the strict francinette in file_utils.c.
+ - The problem is probably not freeing other stuff if allocation fails.
+ - I fixed the code so I seem to be freeing everything if one allocation fails. But now, I get two errors that produce segmentation faults 
+ 	but I don't know why. Am I trying to access some values that cannot be accessed if allocation fails? I don't see anything like it.

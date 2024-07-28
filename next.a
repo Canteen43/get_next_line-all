@@ -1,0 +1,202 @@
+!<arch>
+//                                              24        `
+get_next_line_utils.c/
+
+get_next_line.c/0           0     0     644     1782      `
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kweihman <kweihman@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/17 13:56:02 by kweihman          #+#    #+#             */
+/*   Updated: 2024/07/20 16:45:30 by kweihman         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <get_next_line.h>
+
+char	*get_next_line(int fd)
+{
+	static char	*reststring;
+	ssize_t		read_rt;
+
+	if (BUFFER_SIZE < 1)
+		return (NULL);
+	if (reststring == NULL)
+		reststring = set_null_character(reststring);
+	if (reststring == NULL)
+		return (NULL);
+	read_rt = BUFFER_SIZE;
+	while (includes_newline(reststring) == 0 && read_rt == BUFFER_SIZE)
+	{
+		reststring = keep_reading(reststring, fd, &read_rt);
+		if (reststring == NULL)
+			return (NULL);
+	}
+	if (includes_newline(reststring) == 1)
+		return (return_next_line(&reststring));
+	if (*reststring != '\0')
+		return (return_last_line(&reststring));
+	return (NULL);
+}
+
+char	*set_null_character(char *p)
+{
+	p = malloc(1);
+	if (p == NULL)
+		return (NULL);
+	*p = '\0';
+	return (p);
+}
+
+char	*return_last_line(char **p_reststring)
+{
+	char	*name;
+
+	name = *p_reststring;
+	*p_reststring = set_null_character(*p_reststring);
+	return (name);
+}
+/0              0           0     0     644     3188      `
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kweihman <kweihman@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/17 14:00:02 by kweihman          #+#    #+#             */
+/*   Updated: 2024/07/20 16:45:21 by kweihman         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <get_next_line.h>
+
+//This function takes a string and adds a newly read buffer to its end.
+char	*keep_reading(char *reststring, int fd, int *p_read_rt)
+{
+	int		len;
+	char	*new_reststring;
+
+	len = length(reststring, 0, 0, 0);
+	new_reststring = malloc(len + BUFFER_SIZE + 1);
+	if (new_reststring == NULL)
+		return (NULL);
+	copy(reststring, new_reststring, 0, 0);
+	free(reststring);
+	*p_read_rt = read(fd, (new_reststring + len), BUFFER_SIZE);
+	if (*p_read_rt == -1)
+		return (NULL);
+	*(new_reststring + len + *p_read_rt) = '\0';
+	return (new_reststring);
+}
+
+//Returns the length of a given string.
+// If skip_until is not 0, it will only start counting characters after 
+//  skip_until is encountered
+// end_char sets a character where the function stops counting
+// If incl is non-zero it will include the end character in the count. 
+//  If it is 0, it will exclude the end character
+int	length(char *str, int skip_until, int end_char, int incl)
+{
+	int	len;
+
+	if (skip_until != 0)
+		while (*str++ != skip_until)
+			;
+	while (*str)
+	{
+		if (*str == end_char)
+			break ;
+		len++;
+		str++;
+	}
+	if (incl != 0)
+		len++;
+}
+
+//Copies from one string to another.
+// If skip_until is not 0, it will only start copying characters after 
+//  skip_until is encountered
+// end_char sets a character where the function stops copying
+// It will always copy the end character as well.
+void	copy(char *src, char *dst, int skip_until, int end_char)
+{
+	if (skip_until != 0)
+		while (*src++ != skip_until)
+			;
+	while (*src)
+	{
+		if (*src == end_char)
+			break ;
+		*dst++ = *src++;
+	}
+	*dst == *src;
+}
+
+// Checks if given string includes a '\n' character.
+// Returns 1 (true) or 0 (false).
+int	includes_newline(char *reststring)
+{
+	while (*reststring != '\0')
+	{
+		if (*reststring == '\n')
+			return (1);
+		reststring++;
+	}
+	return (0);
+}
+
+char	*return_next_line(char **p_reststring)
+{
+	char	*next_line;
+	char	*new_reststring;
+
+	next_line = malloc(length(*p_reststring, 0, '\n', 1) + 1);
+	if (next_line == NULL)
+		return (NULL);
+	copy(*p_reststring, next_line, 0, '\n');
+	new_reststring = malloc(length(*p_reststring, '\n', 0, 0) + 1);
+	if (new_reststring == NULL)
+		return (NULL);
+	copy(*p_reststring, new_reststring, '\n', 0);
+	free(*p_reststring);
+	*p_reststring = new_reststring;
+	return (next_line);
+}
+get_next_line.h/0           0     0     644     1462      `
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kweihman <kweihman@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/17 14:00:09 by kweihman          #+#    #+#             */
+/*   Updated: 2024/07/20 16:43:57 by kweihman         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef GET_NEXT_LINE_H
+
+# include <unistd.h> //read()
+# include <stdlib.h> //malloc() and free()
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 43
+# endif
+
+# define GET_NEXT_LINE_H
+
+char	*get_next_line(int fd);
+char	*keep_reading(char *reststring, int fd, int *p_read_rt);
+int		length(char *str, int skip_until, int end_char, int incl);
+void	copy(char *src, char *dst, int skip_until, int end_char);
+int		includes_newline(char *reststring);
+void	return_next_line(char **p_reststring);
+char	*set_null_character(char *p);
+char	*return_last_line(char **p_reststring);
+
+#endif

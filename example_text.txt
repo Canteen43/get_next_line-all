@@ -1,0 +1,13 @@
+This is a .txt file. It contains some random text.
+There is a lot of
+linebreaks
+
+I need linebreaks to test my
+get
+next
+line
+
+
+
+
+Does it work?
