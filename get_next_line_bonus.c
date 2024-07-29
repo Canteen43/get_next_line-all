@@ -1,41 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kweihman <kweihman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 13:56:02 by kweihman          #+#    #+#             */
-/*   Updated: 2024/07/29 12:17:34 by kweihman         ###   ########.fr       */
+/*   Updated: 2024/07/29 12:26:14 by kweihman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*get_next_line(int fd)
 {
-	static char	*reststring;
+	static char	*reststring[1024];
 	int			bytes_read;
 
-	if (BUFFER_SIZE < 1)
+	if (BUFFER_SIZE < 1 || fd < 0 || fd > 1023)
 		return (NULL);
-	if (reststring == NULL)
-		reststring = set_null_character(reststring);
-	if (reststring == NULL)
+	if (reststring[fd] == NULL)
+		reststring[fd] = set_null_character(reststring[fd]);
+	if (reststring[fd] == NULL)
 		return (NULL);
 	bytes_read = BUFFER_SIZE;
-	while (includes_newline(reststring) == 0 && bytes_read == BUFFER_SIZE)
+	while (includes_newline(reststring[fd]) == 0 && bytes_read == BUFFER_SIZE)
 	{
-		reststring = keep_reading(reststring, fd, &bytes_read);
-		if (reststring == NULL)
+		reststring[fd] = keep_reading(reststring[fd], fd, &bytes_read);
+		if (reststring[fd] == NULL)
 			return (NULL);
 	}
-	if (includes_newline(reststring) == 1)
-		return (return_next_line(&reststring));
-	if (*reststring != '\0')
-		return (return_last_line(&reststring));
-	free(reststring);
-	reststring = NULL;
+	if (includes_newline(reststring[fd]) == 1)
+		return (return_next_line(&reststring[fd]));
+	if (*reststring[fd] != '\0')
+		return (return_last_line(&reststring[fd]));
+	free(reststring[fd]);
+	reststring[fd] = NULL;
 	return (NULL);
 }
 

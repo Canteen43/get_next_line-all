@@ -6,7 +6,7 @@
 /*   By: kweihman <kweihman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 14:27:32 by kweihman          #+#    #+#             */
-/*   Updated: 2024/07/26 13:47:21 by kweihman         ###   ########.fr       */
+/*   Updated: 2024/07/29 12:22:37 by kweihman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	ft_error_codes(int error_code)
 	if (error_code == 0)
 		write_string(2, "\nFile name missing.");
 	if (error_code == 1)
-		write_string(2, "\nToo many arguments.");
+		write_string(2, "\nNo or too many file names.");
 	if (error_code == 2)
 		write_string(2, "\nCannot open file.");
 	if (error_code == 3)
@@ -54,9 +54,7 @@ int	main(int argc, char *argv[])
 	int		line_number;
 	char	*next_line;
 
-	if (argc == 1)
-		return (ft_error_codes(0));
-	if (argc > 2)
+	if (argc != 2)
 		return (ft_error_codes(1));
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
