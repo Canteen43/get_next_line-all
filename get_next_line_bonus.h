@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kweihman <kweihman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 14:00:09 by kweihman          #+#    #+#             */
-/*   Updated: 2024/07/28 10:29:23 by kweihman         ###   ########.fr       */
+/*   Updated: 2024/07/29 12:20:54 by kweihman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_BONUS_H
 
 # include <unistd.h> //read()
 # include <stdlib.h> //malloc() and free()
@@ -19,7 +19,7 @@
 #  define BUFFER_SIZE 43
 # endif
 
-# define GET_NEXT_LINE_H
+# define GET_NEXT_LINE_BONUS_H
 
 char	*get_next_line(int fd);
 char	*keep_reading(char *reststring, int fd, int *p_read_rt);

@@ -6,7 +6,7 @@
 /*   By: kweihman <kweihman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 13:56:02 by kweihman          #+#    #+#             */
-/*   Updated: 2024/07/26 14:05:33 by kweihman         ###   ########.fr       */
+/*   Updated: 2024/07/29 12:17:34 by kweihman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ char	*get_next_line(int fd)
 	return (NULL);
 }
 
+// This function is needed because my function rely on
+//  the reststring being a valid pointer. It sets the reststring
+//  from NULL to pointer to \0.
 char	*set_null_character(char *p)
 {
 	p = malloc(1);
@@ -48,6 +51,8 @@ char	*set_null_character(char *p)
 	return (p);
 }
 
+// This function returns the pointer to the last line read while
+//  setting the reststring to NULL.
 char	*return_last_line(char **p_reststring)
 {
 	char	*name;
@@ -82,62 +87,8 @@ char	*keep_reading(char *reststring, int fd, int *p_bytes_read)
 	return (new_reststring);
 }
 
-//Returns the length of a given string.
-// If skip_until is not 0, it will only start counting characters after 
-//  skip_until is encountered
-// end_char sets a character where the function stops counting
-// If incl is non-zero it will include the end character in the count. 
-//  If it is 0, it will exclude the end character
-int	length(char *str, int skip_until, int end_char, int incl)
-{
-	int	len;
-
-	len = 0;
-	if (skip_until != 0)
-		while (*str++ != skip_until)
-			;
-	while (*str)
-	{
-		if (*str == end_char)
-			break ;
-		len++;
-		str++;
-	}
-	if (incl != 0)
-		len++;
-	return (len);
-}
-
-//Copies from one string to another.
-// If skip_until is not 0, it will only start copying characters after 
-//  skip_until is encountered.
-// End_char sets a character where the function stops copying.
-// It will always copy the end character as well.
-void	copy(char *src, char *dst, int skip_until, int end_char)
-{
-	if (skip_until != 0)
-		while (*src++ != skip_until)
-			;
-	while (*src != end_char)
-		*dst++ = *src++;
-	*dst = end_char;
-	if (end_char != 0)
-		*++dst = '\0';
-}
-
-// Checks if given string includes a '\n' character.
-// Returns 1 (true) or 0 (false).
-int	includes_newline(char *reststring)
-{
-	while (*reststring != '\0')
-	{
-		if (*reststring == '\n')
-			return (1);
-		reststring++;
-	}
-	return (0);
-}
-
+// This function returns the next line while also handling the
+//  creation of the new_reststring that does not include that next line.
 char	*return_next_line(char **p_reststring)
 {
 	char	*next_line;

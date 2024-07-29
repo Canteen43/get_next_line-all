@@ -32,3 +32,6 @@ I now pass the normal francinette. I am looking and the null check of the strict
  - The problem is probably not freeing other stuff if allocation fails.
  - I fixed the code so I seem to be freeing everything if one allocation fails. But now, I get two errors that produce segmentation faults 
  	but I don't know why. Am I trying to access some values that cannot be accessed if allocation fails? I don't see anything like it.
+
+NULL logic: A gave some thought as to whether I could rewrite the program so that it lets empty strings be NULL until and if they are filled.
+ I think it would be a little cleaner. But I think this is not a good use of my time right now. I want to focus on fixing the bug.
